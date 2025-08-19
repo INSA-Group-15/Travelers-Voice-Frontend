@@ -29,7 +29,7 @@ const Hero: React.FC = () => {
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                to="/report-issue"
+                to="/report"
                 className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-50 transition-colors duration-200 shadow-lg hover:shadow-xl"
               >
                 Report an Issue
@@ -72,52 +72,35 @@ const Hero: React.FC = () => {
             </div>
           </div>
 
-          {/* Visual Element */}
+          {/* Animated Illustration */}
           <div className="relative">
             <div className="relative z-10">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-                <div className="space-y-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium">Live Report</span>
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 transform transition-all duration-500 hover:shadow-2xl">
+                <div className="flex flex-col items-center justify-center space-y-6 py-8">
+                  <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center shadow-lg">
+                    <Shield className="w-12 h-12 text-white" />
                   </div>
-                  <div className="space-y-4">
-                    <div className="bg-white/20 rounded-lg p-4">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">!</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Overpriced Fare</p>
-                          <p className="text-sm text-primary-200">Downtown Bus Station</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-primary-100">
-                        Driver charging 50% more than standard fare
-                      </p>
-                    </div>
-                    <div className="bg-white/20 rounded-lg p-4">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-sm font-bold">⚠</span>
-                        </div>
-                        <div>
-                          <p className="font-semibold">Poor Service</p>
-                          <p className="text-sm text-primary-200">Central Station</p>
-                        </div>
-                      </div>
-                      <p className="text-sm text-primary-100">
-                        Bus delayed by 30 minutes, no explanation
-                      </p>
-                    </div>
+                  
+                  <div className="text-center space-y-3">
+                    <h3 className="text-2xl font-bold">Safe & Secure</h3>
+                    <p className="text-primary-100 max-w-md">
+                      Your privacy and security are our top priorities. All reports are encrypted and handled with the utmost confidentiality.
+                    </p>
+                  </div>
+                  
+                  <div className="pt-4">
+                    <Link to="/report" className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 rounded-lg text-white font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center">
+                      Report Safely
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
             
             {/* Floating Elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-400/20 rounded-full blur-xl"></div>
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-400/20 rounded-full blur-xl"></div>
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-amber-400/20 rounded-full blur-xl animate-pulse"></div>
+            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-amber-400/20 rounded-full blur-xl animate-pulse"></div>
           </div>
         </div>
       </div>
@@ -125,4 +108,4 @@ const Hero: React.FC = () => {
   );
 };
 
-export default Hero; 
+export default Hero;

@@ -128,36 +128,20 @@ const Home: React.FC = () => {
 
   const stats = [
     { 
-      number: '1,247+', 
+      number: '0+', 
       label: 'Reports Submitted',
       icon: MessageCircle,
       color: 'text-blue-600',
-      change: '↑ 12% from last month',
+      change: '↑ 0% from last month',
       delay: 0.1
     },
     { 
-      number: '89%', 
+      number: '0%', 
       label: 'Resolution Rate',
       icon: CheckCheck,
       color: 'text-green-600',
-      change: '↑ 5% from last month',
+      change: '↑ 0 % from last month ',
       delay: 0.2
-    },
-    { 
-      number: '15+', 
-      label: 'Active Locations',
-      icon: MapIcon,
-      color: 'text-purple-600',
-      change: '3 new locations added',
-      delay: 0.3
-    },
-    { 
-      number: '2.3h', 
-      label: 'Avg Response Time',
-      icon: Clock,
-      color: 'text-amber-600',
-      change: '↓ 0.7h from last month',
-      delay: 0.4
     }
   ];
 
@@ -302,7 +286,7 @@ const Home: React.FC = () => {
           </motion.div>
 
           <motion.div 
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 max-w-3xl mx-auto gap-8"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -525,7 +509,7 @@ const Home: React.FC = () => {
               whileTap={{ scale: 0.98 }}
             >
               <Link
-                to={user ? "/report" : "/login"}
+                to={user ? "/report" : "/report-issue"}
                 className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-yellow-500 to-amber-600 rounded-lg hover:shadow-lg hover:shadow-yellow-500/20 transition-all duration-300"
               >
                 {user ? 'Report an Issue Now' : 'Get Started for Free'}
@@ -568,4 +552,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home; 
+export default Home;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../../context/AuthContext.tsx';
@@ -147,16 +147,9 @@ const LoginForm: React.FC = () => {
                         <div className="text-sm text-gray-500">{role.description}</div>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        fillDemoCredentials(role);
-                      }}
-                      className="absolute top-2 right-2 text-xs text-primary-600 hover:text-primary-700"
-                    >
-                      Demo
-                    </button>
+
+                
+
                   </div>
                 ))}
               </div>
@@ -265,10 +258,10 @@ const LoginForm: React.FC = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{' '}
-              <a href="#" className="font-medium text-primary-600 hover:text-primary-500">
-                Contact your administrator
-              </a>
+              New to Travelers' Voice?{' '}
+              <Link to="/learn-more" className="font-medium text-primary-600 hover:text-primary-500">
+                Learn more
+              </Link>
             </p>
           </div>
         </div>

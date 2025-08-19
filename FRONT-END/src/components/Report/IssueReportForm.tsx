@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
-import { 
-  AlertTriangle, 
+import {  
   DollarSign, 
   Bus, 
   Droplets, 
   Car, 
   MapPin, 
-  Upload, 
   Send,
   Phone,
   Mail
@@ -19,27 +17,27 @@ interface IssueReportFormData {
   type: string;
   title: string;
   description: string;
-  location: string;
+  startStation: string;
+  endStation: string;
   priority: string;
   contactInfo: {
     phone?: string;
     email?: string;
   };
-  shareLocation: boolean;
 }
 
 const IssueReportForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState<{lat: number, lng: number} | null>(null);
+
   
   const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<IssueReportFormData>({
     defaultValues: {
       type: '',
       title: '',
       description: '',
-      location: '',
+      startStation: '',
+      endStation: '',
       priority: 'medium',
-      shareLocation: false,
       contactInfo: {
         phone: '',
         email: ''
@@ -61,24 +59,7 @@ const IssueReportForm: React.FC = () => {
     { value: 'critical', label: 'Critical', color: 'bg-red-100 text-red-800' },
   ];
 
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setCurrentLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          toast.success('Location captured successfully!');
-        },
-        (error) => {
-          toast.error('Unable to get location. Please enter manually.');
-        }
-      );
-    } else {
-      toast.error('Geolocation is not supported by this browser.');
-    }
-  };
+
 
   const onSubmit = async (data: IssueReportFormData) => {
     setIsSubmitting(true);
@@ -96,11 +77,10 @@ const IssueReportForm: React.FC = () => {
         reportedBy: 'Anonymous',
         reportedAt: new Date(),
         contactInfo: data.contactInfo,
-        location: data.shareLocation && currentLocation ? {
-          latitude: currentLocation.lat,
-          longitude: currentLocation.lng,
-          address: data.location
-        } : undefined
+        location: {
+          startStation: data.startStation,
+          endStation: data.endStation
+        }
       };
 
       // Store in localStorage for demo
@@ -110,7 +90,7 @@ const IssueReportForm: React.FC = () => {
 
       toast.success('Report submitted successfully! Authorities have been notified.');
       reset();
-      setCurrentLocation(null);
+
     } catch (error) {
       toast.error('Failed to submit report. Please try again.');
     } finally {
@@ -210,90 +190,44 @@ const IssueReportForm: React.FC = () => {
             )}
           </div>
 
-          {/* Location */}
-          <div className="space-y-4">
+          {/* Station Information */}
+          <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Location Information
+                Starting Station
               </label>
               <div className="flex space-x-4">
                 <input
                   type="text"
-                  {...register('location')}
+                  {...register('startStation', { 
+                    required: 'Starting station is required'
+                  })}
                   className="input-field flex-1"
-                  placeholder="e.g., Downtown Bus Station, Central Market"
+                  placeholder="e.g., Central Station, Downtown Terminal"
                 />
-                <button
-                  type="button"
-                  onClick={getCurrentLocation}
-                  className="btn-secondary flex items-center space-x-2"
-                >
-                  <MapPin className="w-4 h-4" />
-                  <span>Get Location</span>
-                </button>
               </div>
+              {errors.startStation && (
+                <p className="mt-2 text-sm text-red-600">{errors.startStation.message}</p>
+              )}
             </div>
 
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                {...register('shareLocation')}
-                className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-              />
-              <label className="text-sm text-gray-700">
-                Share my current location (optional)
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                End Station
               </label>
-            </div>
-
-            {currentLocation && (
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                <div className="flex items-center space-x-2">
-                  <MapPin className="w-5 h-5 text-green-600" />
-                  <span className="text-sm text-green-800">
-                    Location captured: {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}
-                  </span>
-                </div>
+              <div className="flex space-x-4">
+                <input
+                  type="text"
+                  {...register('endStation', { 
+                    required: 'End station is required'
+                  })}
+                  className="input-field flex-1"
+                  placeholder="e.g., North Terminal, Market Square Station"
+                />
               </div>
-            )}
-          </div>
-
-          {/* Contact Information (Optional) */}
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Contact Information (Optional)</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              Provide your contact details if you'd like to be updated about the resolution of your report.
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="tel"
-                    {...register('contactInfo.phone')}
-                    className="input-field pl-10"
-                    placeholder="+1 (555) 123-4567"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="email"
-                    {...register('contactInfo.email')}
-                    className="input-field pl-10"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-              </div>
+              {errors.endStation && (
+                <p className="mt-2 text-sm text-red-600">{errors.endStation.message}</p>
+              )}
             </div>
           </div>
 
@@ -323,4 +257,4 @@ const IssueReportForm: React.FC = () => {
   );
 };
 
-export default IssueReportForm; 
+export default IssueReportForm;

@@ -55,7 +55,7 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
   }));
 
   const locationData = Object.entries(stats.reportsByLocation).map(([location, count]) => ({
-    name: location,
+    name: location.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
     value: count
   }));
 
@@ -229,4 +229,4 @@ const DashboardStats: React.FC<DashboardStatsProps> = ({ stats }) => {
   );
 };
 
-export default DashboardStats; 
+export default DashboardStats;

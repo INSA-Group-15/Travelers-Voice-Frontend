@@ -188,6 +188,22 @@ const App: React.FC = () => {
                       </PublicRoute>
                     } 
                   />
+                   <Route 
+                    path="/report-issue" 
+                    element={
+                      <PublicRoute>
+                        <IssueReportForm />
+                      </PublicRoute>
+                    } 
+                  />
+                  <Route 
+                    path="/report" 
+                    element={
+                      <PublicRoute>
+                        <IssueReportForm />
+                      </PublicRoute>
+                    } 
+                  />
                   <Route 
                     path="/login" 
                     element={
@@ -198,14 +214,7 @@ const App: React.FC = () => {
                       </PublicRoute>
                     } 
                   />
-                  <Route 
-                    path="/report-issue" 
-                    element={
-                      <ProtectedRoute>
-                        <IssueReportForm />
-                      </ProtectedRoute>
-                    } 
-                  />
+                 
                   <Route 
                     path="/dashboard" 
                     element={

@@ -45,21 +45,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const mockUsers: Record<string, User> = {
       'police@transport.gov': {
         id: '1',
-        name: 'Officer John Smith',
+        name: 'kebede Tesfaye',
         email: 'police@transport.gov',
         role: 'traffic_police',
         location: 'Downtown District'
       },
       'manager@busstation.com': {
         id: '2',
-        name: 'Sarah Johnson',
+        name: 'almaz Negash',
         email: 'manager@busstation.com',
         role: 'bus_station_manager',
         location: 'Central Bus Station'
       },
       'admin@transport.gov': {
         id: '3',
-        name: 'Michael Chen',
+        name: 'seble Tesfaye',
         email: 'admin@transport.gov',
         role: 'transportation_office',
         location: 'Transportation Office'

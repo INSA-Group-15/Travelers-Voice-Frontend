@@ -3,19 +3,22 @@ import { useAuth } from '../context/AuthContext.tsx';
 import { 
   Filter, 
   Search, 
-  Calendar,
+  Calendar, 
   MapPin,
   AlertTriangle,
   CheckCircle,
-  Clock,
-  TrendingUp
+  Clock
 } from 'lucide-react';
-import { IssueReport } from '../types';
+import { IssueReport, DashboardStats as DashboardStatsType } from '../types';
+import DashboardStats from '../components/Dashboard/DashboardStats.tsx';
 
 const Dashboard: React.FC = () => {
   const { user } = useAuth();
   const [recentReports, setRecentReports] = useState<IssueReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [dashboardStats, setDashboardStats] = useState<DashboardStatsType | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     const loadDashboardData = async () => {
@@ -33,9 +36,8 @@ const Dashboard: React.FC = () => {
           reportedBy: 'Anonymous',
           reportedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
           location: {
-            latitude: 40.7128,
-            longitude: -74.0060,
-            address: 'Downtown Bus Station'
+            startStation: 'Downtown Bus Station',
+            endStation: 'Central Market'
           }
         },
         {
@@ -48,14 +50,77 @@ const Dashboard: React.FC = () => {
           reportedBy: 'Anonymous',
           reportedAt: new Date(Date.now() - 4 * 60 * 60 * 1000),
           location: {
-            latitude: 40.7589,
-            longitude: -73.9851,
-            address: 'Central Station'
+            startStation: 'Central Station',
+            endStation: 'Uptown Terminal'
+          }
+        },
+        {
+          id: '3',
+          type: 'gas_station',
+          title: 'Gas station out of fuel',
+          description: 'The gas station at North Terminal has been out of fuel for 2 days.',
+          status: 'resolved',
+          priority: 'high',
+          reportedBy: 'Anonymous',
+          reportedAt: new Date(Date.now() - 24 * 60 * 60 * 1000),
+          location: {
+            startStation: 'North Terminal',
+            endStation: 'East Station'
+          }
+        },
+        {
+          id: '4',
+          type: 'traffic_accident',
+          title: 'Minor collision at intersection',
+          description: 'Two buses had a minor collision at the intersection near South Terminal.',
+          status: 'urgent',
+          priority: 'critical',
+          reportedBy: 'Anonymous',
+          reportedAt: new Date(Date.now() - 12 * 60 * 60 * 1000),
+          location: {
+            startStation: 'South Terminal',
+            endStation: 'West Station'
           }
         }
       ];
 
+      // Generate dashboard stats
+      const generateDashboardStats = (reports: IssueReport[]): DashboardStatsType => {
+        // Count reports by status
+        const pendingReports = reports.filter(r => r.status === 'pending').length;
+        const resolvedReports = reports.filter(r => r.status === 'resolved').length;
+        const urgentReports = reports.filter(r => r.status === 'urgent').length;
+        
+        // Count reports by type
+        const reportsByType: Record<string, number> = {};
+        reports.forEach(report => {
+          reportsByType[report.type] = (reportsByType[report.type] || 0) + 1;
+        });
+        
+        // Count reports by location (using route: startStation to endStation)
+        const reportsByLocation: Record<string, number> = {};
+        reports.forEach(report => {
+          if (report.location) {
+            const routeKey = `${report.location.startStation} to ${report.location.endStation}`;
+            reportsByLocation[routeKey] = (reportsByLocation[routeKey] || 0) + 1;
+          }
+        });
+        
+        return {
+          totalReports: reports.length,
+          pendingReports,
+          resolvedReports,
+          urgentReports,
+          reportsByType,
+          reportsByLocation,
+          averageResolutionTime: 24.5 // Mock value in hours
+        };
+      };
+
+      const stats = generateDashboardStats(mockReports);
+      
       setRecentReports(mockReports);
+      setDashboardStats(stats);
       setIsLoading(false);
     };
 
@@ -96,6 +161,16 @@ const Dashboard: React.FC = () => {
     return type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
+  const filteredReports = recentReports
+    .filter(report =>
+      searchTerm === '' ||
+      report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      report.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter(report =>
+      statusFilter === 'all' || report.status === statusFilter
+    );
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -121,55 +196,7 @@ const Dashboard: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Total Reports</p>
-                <p className="text-3xl font-bold text-gray-900">1,247</p>
-              </div>
-              <div className="p-3 rounded-lg bg-blue-50">
-                <TrendingUp className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Pending</p>
-                <p className="text-3xl font-bold text-gray-900">89</p>
-              </div>
-              <div className="p-3 rounded-lg bg-yellow-50">
-                <Clock className="w-6 h-6 text-yellow-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Resolved</p>
-                <p className="text-3xl font-bold text-gray-900">1,108</p>
-              </div>
-              <div className="p-3 rounded-lg bg-green-50">
-                <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-          
-          <div className="card">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600">Urgent</p>
-                <p className="text-3xl font-bold text-gray-900">50</p>
-              </div>
-              <div className="p-3 rounded-lg bg-red-50">
-                <AlertTriangle className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+        {dashboardStats && <DashboardStats stats={dashboardStats} />}
 
         <div className="card">
           <div className="flex items-center justify-between mb-6">
@@ -180,18 +207,31 @@ const Dashboard: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search reports..."
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="input-field pl-10"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                 />
               </div>
-              <button className="btn-secondary flex items-center space-x-2">
-                <Filter className="w-4 h-4" />
-                <span>Filter</span>
-              </button>
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                <select
+                  className="input-field pl-10 appearance-none bg-white"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option value="all">All Statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="urgent">Urgent</option>
+                </select>
+              </div>
             </div>
           </div>
 
           <div className="space-y-4">
-            {recentReports.map((report) => (
+            {filteredReports.length > 0 ? (
+              filteredReports.map((report) => (
               <div key={report.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -206,7 +246,7 @@ const Dashboard: React.FC = () => {
                     <div className="flex items-center space-x-4 text-sm text-gray-500">
                       <div className="flex items-center space-x-1">
                         <MapPin className="w-4 h-4" />
-                        <span>{report.location?.address || 'Location not specified'}</span>
+                        <span>{report.location ? `${report.location.startStation} to ${report.location.endStation}` : 'Route not specified'}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="w-4 h-4" />
@@ -229,7 +269,16 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+            ) : (
+              <div className="text-center py-12">
+                <Search className="mx-auto h-12 w-12 text-gray-400" />
+                <h3 className="mt-2 text-sm font-medium text-gray-900">No reports found</h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  Try adjusting your search or filter to find what you're looking for.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -237,4 +286,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

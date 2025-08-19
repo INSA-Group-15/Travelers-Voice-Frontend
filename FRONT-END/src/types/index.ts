@@ -12,9 +12,8 @@ export interface IssueReport {
   title: string;
   description: string;
   location?: {
-    latitude: number;
-    longitude: number;
-    address: string;
+    startStation: string;
+    endStation: string;
   };
   status: 'pending' | 'in_progress' | 'resolved' | 'urgent';
   priority: 'low' | 'medium' | 'high' | 'critical';
@@ -58,4 +57,4 @@ export interface FilterOptions {
     end: Date;
   };
   location?: string;
-} 
+}
